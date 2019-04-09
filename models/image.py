@@ -1,6 +1,7 @@
 from db import db
 from typing import List
 
+
 class ImageModel(db.Model):
     __tablename__ = "images"
 
@@ -9,7 +10,6 @@ class ImageModel(db.Model):
     url = db.Column(db.String(200), nullable=False)
     full_size_url = db.Column(db.String(200), nullable=False)
     date = db.Column(db.String(200), nullable=False)
-
 
     @classmethod
     def find_by_name(cls, name: str) -> "ImageModel":
