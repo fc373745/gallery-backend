@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 from marshmallow import ValidationError
 from db import db
 from ma import ma
-from resources.image import Image
+from resources.image import Image, ImageList
 
 
 app = Flask(__name__)
@@ -36,6 +36,7 @@ def handle_marshmallow_validation(err):
 
 
 api.add_resource(Image, "/image")
+api.add_resource(ImageList, "/images")
 
 if __name__ == "__main__":
     db.init_app(app)

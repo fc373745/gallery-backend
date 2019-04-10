@@ -49,3 +49,9 @@ class Image(Resource):
                 return {"message": "error uploading file"}, 500
             return image.json(), 201
         return {"message": "Please select an image"}, 401
+
+
+class ImageList(Resource):
+    @classmethod
+    def get(cls):
+        return {"items": [image.json() for image in ImageModel.find_all()]}
