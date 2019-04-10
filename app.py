@@ -10,7 +10,6 @@ from ma import ma
 from resources.image import Image
 
 
-
 app = Flask(__name__)
 load_dotenv(".env", verbose=True)
 app.config.from_object("default_config")  # load default configs from default_config.py
@@ -22,7 +21,7 @@ api = Api(app)
 cloudinary.config(
     cloud_name=os.environ.get("CL_CLOUD_NAME"),
     api_key=os.environ.get("CL_API_KEY"),
-    api_secret=os.environ.get("CL_API_SECRET")
+    api_secret=os.environ.get("CL_API_SECRET"),
 )
 
 
