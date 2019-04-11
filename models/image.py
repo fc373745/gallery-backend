@@ -1,6 +1,7 @@
 from db import db
 from typing import List
-import json
+from PIL import Image
+from sqlalchemy import desc
 
 
 class ImageModel(db.Model):
@@ -8,6 +9,8 @@ class ImageModel(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), nullable=False, unique=True)
+    width = db.Column(db.Integer, nullable=False)
+    height = db.Column(db.Integer, nullable=False)
     url = db.Column(db.String(200), nullable=False)
     full_size_url = db.Column(db.String(200), nullable=False)
 
@@ -16,8 +19,26 @@ class ImageModel(db.Model):
         return cls.query.filter_by(name=name).first()
 
     @classmethod
+    def find_by_id(cls, _id: int) -> "ImageModel":
+        return cls.query.filter_by(id=_id).first()
+
+    @classmethod
     def find_all(cls) -> List["ImageModel"]:
         return cls.query.all()
+
+    @classmethod
+    def find_by_offset(cls, offset: int):
+        query = cls.query.order_by(desc(ImageModel.id)).limit(12).offset(offset).all()
+        has_next = False
+        _next = len(cls.query.all()) - (int(offset) + 12)
+        if _next >= 0:
+            has_next=True
+        return {"images": [image.json() for image in query], "has_next": has_next}
+
+    @classmethod
+    def find_dimensions(cls, file: str) -> List[int]:
+        im = Image.open(file)
+        return list(im.size)
 
     def save_to_db(self) -> None:
         db.session.add(self)

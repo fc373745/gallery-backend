@@ -9,13 +9,17 @@ from db import db
 from ma import ma
 from resources.image import Image, ImageList
 
+from flask_cors import CORS
 
 app = Flask(__name__)
+cors = CORS(app)
+
 load_dotenv(".env", verbose=True)
 app.config.from_object("default_config")  # load default configs from default_config.py
 app.config.from_envvar(
     "APPLICATION_SETTINGS"
 )  # override with config.py (APPLICATION_SETTINGS points to config.py)
+
 api = Api(app)
 
 cloudinary.config(
@@ -29,6 +33,13 @@ cloudinary.config(
 def create_tables():
     db.create_all()
 
+
+# @app.after_request
+# def after_request(response):
+#     response.headers.add('Access-Control-Allow-Origin', '*')
+#     response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+#     response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE')
+#     return response
 
 @app.errorhandler(ValidationError)
 def handle_marshmallow_validation(err):

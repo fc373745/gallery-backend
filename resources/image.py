@@ -6,6 +6,8 @@ from flask import request
 from models.image import ImageModel
 from schemas.image import ImageSchema
 
+
+
 image_schema = ImageSchema()
 image_list_schema = ImageSchema(many=True)
 
@@ -17,30 +19,28 @@ class Image(Resource):
         if ImageModel.find_by_name(name):
             return {"message": "An image already exists with that name"}, 400
         image_to_upload = request.files["image"]
+
         if image_to_upload:
             upload_result = upload(image_to_upload)
+            image_sizes = ImageModel.find_dimensions(image_to_upload)
+            width = image_sizes[0]
+            height = image_sizes[1]
             # figure out sizes
             url = cloudinary_url(
                 upload_result["public_id"],
                 format="jpg",
-                crop="fill",
-                width=100,
-                height=100,
+                width=450,
+                quality="auto:good"
             )[0]
 
             full_size_url = cloudinary_url(
                 upload_result["public_id"],
-                format="jpg",
-                crop="fill",
-                width=200,
-                height=100,
-                radius=20,
-                effect="sepia",
+                format="jpg"
             )[0]
 
             image_json = request.form.to_dict()  # this returns None
             image = ImageModel(
-                name=image_json["name"], url=url, full_size_url=full_size_url
+                name=image_json["name"], url=url, full_size_url=full_size_url, width=width, height=height
             )
 
             try:
@@ -54,4 +54,7 @@ class Image(Resource):
 class ImageList(Resource):
     @classmethod
     def get(cls):
-        return {"items": [image.json() for image in ImageModel.find_all()]}
+        args = request.args
+        return ImageModel.find_by_offset(args["offset"])
+
+
