@@ -41,6 +41,7 @@ def create_tables():
 #     response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE')
 #     return response
 
+
 @app.errorhandler(ValidationError)
 def handle_marshmallow_validation(err):
     return jsonify(err.messages), 400

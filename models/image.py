@@ -32,7 +32,7 @@ class ImageModel(db.Model):
         has_next = False
         _next = len(cls.query.all()) - (int(offset) + 12)
         if _next >= 0:
-            has_next=True
+            has_next = True
         return {"images": [image.json() for image in query], "has_next": has_next}
 
     @classmethod
