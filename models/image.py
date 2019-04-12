@@ -8,11 +8,13 @@ class ImageModel(db.Model):
     __tablename__ = "images"
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(80), nullable=False, unique=True)
+    name = db.Column(db.String(150), nullable=False)
+    caption = db.Column(db.String(150))
     width = db.Column(db.Integer, nullable=False)
     height = db.Column(db.Integer, nullable=False)
     url = db.Column(db.String(200), nullable=False)
     full_size_url = db.Column(db.String(200), nullable=False)
+    is_long = db.Column(db.Boolean, nullable=False)
 
     @classmethod
     def find_by_name(cls, name: str) -> "ImageModel":

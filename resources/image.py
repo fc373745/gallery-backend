@@ -15,6 +15,7 @@ class Image(Resource):
     @classmethod
     def post(cls):
         name = request.form.to_dict()["name"]
+        caption = request.form.to_dict()["caption"]
         if ImageModel.find_by_name(name):
             return {"message": "An image already exists with that name"}, 400
         image_to_upload = request.files["image"]
@@ -22,12 +23,27 @@ class Image(Resource):
         if image_to_upload:
             upload_result = upload(image_to_upload)
             image_sizes = ImageModel.find_dimensions(image_to_upload)
-            width = image_sizes[0]
+            width  = image_sizes[0]
             height = image_sizes[1]
-            # figure out sizes
-            url = cloudinary_url(
-                upload_result["public_id"], format="jpg", width=450, quality="auto:good"
-            )[0]
+
+            if width/height > 1.6:
+                width = 900
+                height = round(900 * image_sizes[1] / image_sizes[0])
+                left_url = cloudinary_url(
+                    upload_result["public_id"], format="jpg", width=225, quality="auto:good",
+                )
+                url = cloudinary_url(
+                    upload_result["public_id"], format="jpg", width=900, quality="auto:good"
+                )[0]
+                is_long = True
+            else:
+                width = 450
+                height = round(450 * image_sizes[1] / image_sizes[0])
+                 # figure out sizes
+                url = cloudinary_url(
+                    upload_result["public_id"], format="jpg", width=450, quality="auto:good"
+                )[0]
+                is_long = False
 
             full_size_url = cloudinary_url(upload_result["public_id"], format="jpg")[0]
 
@@ -38,6 +54,8 @@ class Image(Resource):
                 full_size_url=full_size_url,
                 width=width,
                 height=height,
+                is_long=is_long,
+                caption=caption
             )
 
             try:
