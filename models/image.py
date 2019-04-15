@@ -57,6 +57,6 @@ class ImageModel(db.Model):
             "url": self.url,
             "full_url": self.full_size_url,
             "height": self.height,
-            "is_long": self.is_long
+            "is_long": self.is_long,
         }
         return dict

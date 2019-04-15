@@ -24,10 +24,10 @@ class Image(Resource):
             upload_result = upload(image_to_upload)
             print(upload_result["public_id"])
             image_sizes = ImageModel.find_dimensions(image_to_upload)
-            width  = image_sizes[0]
+            width = image_sizes[0]
             height = image_sizes[1]
 
-            if width/height > 1.6:
+            if width / height > 1.6:
                 width = 900
                 height = round(900 * image_sizes[1] / image_sizes[0])
 
@@ -35,18 +35,25 @@ class Image(Resource):
                     upload_result["public_id"],
                     transformation=[
                         {"width": 900, "height": height},
-                        {"crop": "crop", "width":450, "x": 225, "height": height},
-                        {"format":"jpg","width":450, "height": height,"quality":"auto:good"}
-                    ]
-
+                        {"crop": "crop", "width": 450, "x": 225, "height": height},
+                        {
+                            "format": "jpg",
+                            "width": 450,
+                            "height": height,
+                            "quality": "auto:good",
+                        },
+                    ],
                 )[0]
                 is_long = True
             else:
                 width = 450
                 height = round(450 * image_sizes[1] / image_sizes[0])
-                 # figure out sizes
+                # figure out sizes
                 url = cloudinary_url(
-                    upload_result["public_id"], format="jpg", width=450, quality="auto:good"
+                    upload_result["public_id"],
+                    format="jpg",
+                    width=450,
+                    quality="auto:good",
                 )[0]
                 is_long = False
 
@@ -60,7 +67,7 @@ class Image(Resource):
                 width=width,
                 height=height,
                 is_long=is_long,
-                caption=caption
+                caption=caption,
             )
 
             try:
