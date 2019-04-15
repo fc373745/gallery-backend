@@ -22,6 +22,7 @@ class Image(Resource):
 
         if image_to_upload:
             upload_result = upload(image_to_upload)
+            print(upload_result["public_id"])
             image_sizes = ImageModel.find_dimensions(image_to_upload)
             width  = image_sizes[0]
             height = image_sizes[1]
@@ -29,11 +30,15 @@ class Image(Resource):
             if width/height > 1.6:
                 width = 900
                 height = round(900 * image_sizes[1] / image_sizes[0])
-                left_url = cloudinary_url(
-                    upload_result["public_id"], format="jpg", width=225, quality="auto:good",
-                )
+
                 url = cloudinary_url(
-                    upload_result["public_id"], format="jpg", width=900, quality="auto:good"
+                    upload_result["public_id"],
+                    transformation=[
+                        {"width": 900, "height": height},
+                        {"crop": "crop", "width":450, "x": 225, "height": height},
+                        {"format":"jpg","width":450, "height": height,"quality":"auto:good"}
+                    ]
+
                 )[0]
                 is_long = True
             else:
